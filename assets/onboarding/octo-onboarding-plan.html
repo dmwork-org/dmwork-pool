@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Octo Onboarding 优化规划</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: #f8f9fa;
+    color: #1a1a1a;
+    line-height: 1.7;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #3B5BDB 0%, #5C7CFA 100%);
+    color: #fff;
+    padding: 48px 0 40px;
+    text-align: center;
+  }
+  .header .logo { font-size: 48px; margin-bottom: 12px; }
+  .header h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+  .header p { font-size: 15px; opacity: 0.85; }
+  .header .date { font-size: 13px; opacity: 0.6; margin-top: 8px; }
+
+  /* Container */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px 64px;
+  }
+
+  /* Summary Cards */
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: -32px;
+    margin-bottom: 40px;
+  }
+  .summary-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .summary-card .num { font-size: 32px; font-weight: 700; color: #3B5BDB; }
+  .summary-card .label { font-size: 13px; color: #888; margin-top: 4px; }
+
+  /* Section */
+  .section {
+    background: #fff;
+    border-radius: 14px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  }
+  .section h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section h2 .icon { font-size: 22px; }
+  .section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 20px 0 10px;
+    color: #333;
+  }
+  .section p {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+  }
+
+  /* Flow diagram */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 20px 0;
+    overflow-x: auto;
+    padding: 8px 0;
+  }
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 100px;
+    text-align: center;
+  }
+  .flow-step .circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  .flow-step .circle.blue { background: #EDF2FF; border: 2px solid #3B5BDB; }
+  .flow-step .circle.green { background: #E8F5E9; border: 2px solid #43A047; }
+  .flow-step .circle.orange { background: #FFF3E0; border: 2px solid #EF6C00; }
+  .flow-step .name { font-size: 12px; color: #555; font-weight: 500; max-width: 90px; }
+  .flow-step .role { font-size: 10px; color: #aaa; margin-top: 2px; }
+  .flow-arrow {
+    font-size: 18px;
+    color: #ccc;
+    margin: 0 4px;
+    padding-bottom: 24px;
+  }
+
+  /* Strikethrough flow */
+  .flow-old .flow-step .name { text-decoration: line-through; color: #bbb; }
+  .flow-old .flow-step .circle { opacity: 0.4; }
+  .flow-old .flow-arrow { color: #ddd; }
+
+  /* Tag */
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: 6px;
+  }
+  .tag.must { background: #FFEBEE; color: #C62828; }
+  .tag.optimize { background: #E3F2FD; color: #1565C0; }
+  .tag.new { background: #E8F5E9; color: #2E7D32; }
+  .tag.cut { background: #FFF3E0; color: #E65100; }
+  .tag.p0 { background: #F3E5F5; color: #6A1B9A; }
+  .tag.p1 { background: #E8EAF6; color: #283593; }
+  .tag.p2 { background: #F5F5F5; color: #616161; }
+
+  /* Feature list */
+  .feature-list {
+    list-style: none;
+    margin: 12px 0;
+  }
+  .feature-list li {
+    padding: 14px 16px;
+    border: 1px solid #f0f0f0;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    transition: box-shadow 0.2s;
+  }
+  .feature-list li:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .feature-list li .feature-title {
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+  }
+  .feature-list li .feature-desc {
+    font-size: 13px;
+    color: #777;
+    line-height: 1.5;
+  }
+
+  /* Comparison table */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  .compare-table th {
+    background: #f5f6fa;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    color: #555;
+    border-bottom: 2px solid #e8e8e8;
+  }
+  .compare-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #444;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table .old { color: #bbb; text-decoration: line-through; }
+  .compare-table .new-val { color: #2E7D32; font-weight: 500; }
+
+  /* Wizard preview */
+  .wizard-preview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .wizard-card {
+    background: #f8f9ff;
+    border: 1px solid #e0e4f0;
+    border-radius: 10px;
+    padding: 16px 12px;
+    text-align: center;
+  }
+  .wizard-card .step-num {
+    width: 28px;
+    height: 28px;
+    background: #3B5BDB;
+    color: #fff;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .wizard-card .step-title { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 4px; }
+  .wizard-card .step-fields { font-size: 11px; color: #888; line-height: 1.5; }
+
+  /* Timeline */
+  .timeline {
+    margin: 16px 0;
+    padding-left: 24px;
+    border-left: 2px solid #e0e4f0;
+  }
+  .timeline-item {
+    position: relative;
+    padding: 0 0 20px 20px;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -7px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #3B5BDB;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #e0e4f0;
+  }
+  .timeline-item .time-label { font-size: 12px; color: #3B5BDB; font-weight: 600; margin-bottom: 4px; }
+  .timeline-item .time-content { font-size: 14px; color: #555; }
+
+  /* Callout */
+  .callout {
+    background: #FFF8E1;
+    border-left: 4px solid #FFA726;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 13px;
+    color: #795548;
+  }
+
+  .callout.blue {
+    background: #EDF2FF;
+    border-left-color: #3B5BDB;
+    color: #3B5BDB;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    color: #bbb;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .summary { grid-template-columns: 1fr; }
+    .wizard-preview { grid-template-columns: repeat(2, 1fr); }
+    .flow { flex-wrap: wrap; justify-content: center; }
+  }
+
+  .role-card {
+    background: #f8f9ff;
+    border: 1px solid #e0e4f0;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .role-card .role-icon { font-size: 28px; }
+  .role-card .role-info strong { font-size: 15px; color: #1a1a1a; }
+  .role-card .role-info p { font-size: 12px; color: #888; margin: 2px 0 0; }
+  .wt-steps { list-style: none; margin: 16px 0; counter-reset: wt; }
+  .wt-steps li { padding: 10px 16px; border: 1px solid #f0f0f0; border-radius: 8px; margin-bottom: 8px; font-size: 13px; counter-increment: wt; display: flex; align-items: center; gap: 10px; }
+  .wt-steps li::before { content: counter(wt); width: 24px; height: 24px; background: #7171EE; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo"><img src="data:image/png;base64,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" style="width:48px;height:48px;border-radius:12px;"></div>
+  <h1>Octo Onboarding 优化规划</h1>
+  <p>Admin 管理员 · Space 管理员 · 用户 三视角全流程优化方案</p>
+  <p class="date">2026年5月20日</p>
+</div>
+
+<div class="container">
+
+<!-- Summary -->
+<div class="summary">
+  <div class="summary-card">
+    <div class="num">3</div>
+    <div class="label">覆盖角色视角</div>
+  </div>
+  <div class="summary-card">
+    <div class="num">5min</div>
+    <div class="label">Admin 配置时间</div>
+  </div>
+  <div class="summary-card">
+    <div class="num">16</div>
+    <div class="label">优化 Feature 项</div>
+  </div>
+</div>
+
+<!-- Section: Problem -->
+<div class="section">
+  <h2><span class="icon">🔍</span> 问题背景</h2>
+  <p>Octo 平台包含 <strong>SaaS 版本</strong>和<strong>本地化部署版本</strong>两种形态。不同角色在 Onboarding 中面临不同的痛点：</p>
+
+  <div class="callout">
+    ℹ️ <strong>三个角色定义：</strong><br>
+    · <strong>Admin 管理员</strong>：管理后台超级管理员，负责系统初始化配置（仅本地化部署版，SaaS 版的 Admin 是我们自己）<br>
+    · <strong>Space 管理员</strong>：Space 拥有者/管理员，负责管理自己的工作空间（两版本共有）<br>
+    · <strong>普通用户</strong>：通过邀请码/链接注册加入 Space 的成员（两版本共有）
+  </div>
+
+  <h3>当前痛点汇总</h3>
+  <table class="compare-table">
+    <thead><tr><th>角色</th><th>痛点</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Admin 管理员</strong></td><td>需跨 6 个页面手动配置，不知道下一步做什么，SMTP 概念不理解</td></tr>
+      <tr><td><strong>Space 管理员</strong></td><td>首次进入 Space 后不知道在哪管理成员/邀请码，需自行摸索空间管理功能</td></tr>
+      <tr><td><strong>普通用户</strong></td><td>注册后页面空空如也，没有会话和群聊，不知道该干什么</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== 视角一：Admin 管理员 ==================== -->
+<div class="section">
+  <h2><span class="icon">🛠️</span> 视角一：Admin 管理员 <span class="tag" style="background:#FFF3E0;color:#E65100;">仅本地化部署</span></h2>
+
+  <div class="role-card">
+    <div class="role-icon">🛡️</div>
+    <div class="role-info">
+      <strong>Admin 管理员</strong>
+      <p>部署 Octo 的技术管理员，通过管理后台完成系统初始化。SaaS 版中 Admin 是我们自己，不需要引导。</p>
+    </div>
+  </div>
+
+  <h3>优化后流程（Setup Wizard）</h3>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="circle green">🏠</div>
+      <div class="name">打开 Octo 登录页</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="circle green">⚙️</div>
+      <div class="name">点击「管理后台」</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="circle green">1️⃣</div>
+      <div class="name">登录</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="circle green">2️⃣</div>
+      <div class="name">创建 Space</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="circle green">3️⃣</div>
+      <div class="name">配置 SMTP</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="circle green">✅</div>
+      <div class="name">获取邀请码</div>
+    </div>
+  </div>
+
+  <h3>Setup Wizard 步骤</h3>
+  <div class="wizard-preview">
+    <div class="wizard-card">
+      <div class="step-num">1</div>
+      <div class="step-title">管理员登录</div>
+      <div class="step-fields">部署脚本提供的<br>账号 + 密码</div>
+    </div>
+    <div class="wizard-card">
+      <div class="step-num">2</div>
+      <div class="step-title">创建工作空间</div>
+      <div class="step-fields">空间名称（必填）<br>Logo · 人数上限<br>加入方式</div>
+    </div>
+    <div class="wizard-card">
+      <div class="step-num">3</div>
+      <div class="step-title">配置邮件服务</div>
+      <div class="step-fields">发件邮箱（必填）<br>SMTP 服务器<br>SMTP 授权码</div>
+    </div>
+    <div class="wizard-card">
+      <div class="step-num">🎉</div>
+      <div class="step-title">设置完成</div>
+      <div class="step-fields">邀请码 + 链接<br>一键复制<br>进入管理后台</div>
+    </div>
+  </div>
+
+  <h3>Admin 视角 Feature 清单</h3>
+  <ul class="feature-list">
+    <li>
+      <div class="feature-title"><span class="tag p0">P0</span> #1 首次登录 Setup Wizard</div>
+      <div class="feature-desc">管理员首次登录触发阻断式向导，3步完成配置。条件触发逻辑：没创建过Space → 进引导；已创建过 → 直接进管理后台首页。</div>
+    </li>
+    <li>
+      <div class="feature-title"><span class="tag p0">P0</span> #2 邮箱注册默认开启</div>
+      <div class="feature-desc">本地化部署版默认开启邮箱注册功能，管理员有需要时再手动关闭。</div>
+    </li>
+    <li>
+      <div class="feature-title"><span class="tag p0">P0</span> #9 未配置拦截提示</div>
+      <div class="feature-desc">本地化部署版未完成初始配置时，用户在 Octo 登录页点击「登录」或「注册」→ 弹出「系统尚未配置」提示，列出未完成项，引导前往管理后台。</div>
+    </li>
+    <li>
+      <div class="feature-title"><span class="tag p1">P1</span> #5 Octo 登录页管理后台入口</div>
+      <div class="feature-desc">登录页底部弱化文字链接「⚙️ 管理后台」，点击新开标签页打开管理后台。</div>
+    </li>
+    <li>
+      <div class="feature-title"><span class="tag p1">P1</span> #6 SMTP 自动识别 + 快捷选择</div>
+      <div class="feature-desc">根据邮箱后缀自动推测 SMTP 服务器；提供 QQ/163/Gmail 等快捷标签按钮一键填充。</div>
+    </li>
+    <li>
+      <div class="feature-title"><span class="tag p1">P1</span> #7 SMTP 授权码帮助文档</div>
+      <div class="feature-desc">内嵌帮助弹窗「如何获取授权码？」，包含主流邮箱的分步教程。</div>
+    </li>
+    <li>
+      <div class="feature-title"><span class="tag p1">P1</span> #11 管理后台 Walk-through 引导</div>
+      <div class="feature-desc">Setup Wizard 完成后进入管理后台，触发 4 步引导：<br>① 高亮 Space 管理表格，告知已创建的 Space 并引导新增；<br>② 高亮操作列「邀请码」按钮，告知可以在此查看邀请码；<br>③ 打开 Space 详情侧边栏，高亮邀请码 tab 区域（tab栏 + 邀请码列表 + 生成按钮），告知可随时复制或生成新邀请码；<br>④ 高亮左侧「应用 Bot」菜单，说明可配置 Bot 到所有 Space 下可见。</div>
+    </li>
+    <li>
+      <div class="feature-title"><span class="tag p2">P2</span> #8 部署脚本终端输出优化</div>
+      <div class="feature-desc">部署完成后终端直接输出管理后台地址 + 初始账号密码，一屏展示关键信息。</div>
+    </li>
+  </ul>
+</div>
+
+<!-- ==================== 视角二：Space 管理员 ==================== -->
+<div class="section">
+  <h2><span class="icon">👑</span> 视角二：Space 管理员 <span class="tag" style="background:#E8F5E9;color:#2E7D32;">两版本共有</span></h2>
+
+  <div class="role-card">
+    <div class="role-icon">🏢</div>
+    <div class="role-info">
+      <strong>Space 管理员（Space 拥有者）</strong>
+      <p>创建 Space 时被指定的拥有者，拥有 Space 管理权。登录 Octo 后管理自己的空间。SaaS 和本地化部署均适用。</p>
+    </div>
+  </div>
+
+  <h3>Walk-through 引导流程（分两阶段）</h3>
+  <p>Space 管理员的引导拆分为两个独立页面，分别触发：</p>
+
+  <h3>① Octo 主页面引导（3 步）</h3>
+  <p>首次进入 Space 时触发，引导找到空间管理入口：</p>
+  <ol class="wt-steps">
+    <li><strong>欢迎提示</strong> — 欢迎来到你的空间！让我们了解如何管理。</li>
+    <li><strong>设置按钮</strong> — 高亮左下角⚙️齿轮图标，引导点击打开设置菜单。</li>
+    <li><strong>空间管理入口</strong> — 高亮设置菜单中「🏢 空间管理」选项，点击后将打开独立的空间管理页面。</li>
+  </ol>
+
+  <h3>② 空间管理页面引导（5 步）</h3>
+  <p>管理员首次打开空间管理页面（独立网页）时触发，介绍各功能区：</p>
+  <ol class="wt-steps">
+    <li><strong>空间基本信息</strong> — 展示 Space 名称、加入方式和当前成员数。</li>
+    <li><strong>成员管理</strong> — 查看和管理所有空间成员，支持搜索、角色管理和移除操作。</li>
+    <li><strong>邀请码管理</strong> — 生成和管理邀请码/邀请链接，分享给新成员。</li>
+    <li><strong>加入申请</strong> — 当加入方式设为「需审批」时，用户的申请在此批准或拒绝。</li>
+    <li><strong>应用 Bot</strong> — 管理接入到空间的 AI Bot 和第三方应用。</li>
+  </ol>
+
+  <h3>Space 管理员视角 Feature 清单</h3>
+  <ul class="feature-list">
+    <li>
+      <div class="feature-title"><span class="tag p0">P0</span> #3 创建 Space 时自动创建全员群</div>
+      <div class="feature-desc">创建 Space 完成时，自动以 Space 拥有者为群主创建全员群（群名跟随 Space 名称）。新用户加入时自动成为群成员。<br><br><strong>消息列表预置：</strong>所有用户（管理员和普通用户）首次进入 Space 时，「最近」tab 消息列表中预置全员群聊天项（含未读 badge），点击进入可看到系统提示「Admin 管理员创建了 XX 全员群」。普通用户还会看到「用户名 加入了群聊」的提示。<br><br><strong>未读 badge 数量：</strong>SaaS 版「最近」tab 显示 3 条未读（全员群 + 向导虾 + BotFather）；本地化部署版显示 2 条未读（全员群 + BotFather，无向导虾）。</div>
+    </li>
+    <li>
+      <div class="feature-title"><span class="tag p0">P0</span> #4 Space 拥有者免邀请码自动加入</div>
+      <div class="feature-desc">被指定为 Space 拥有者的用户无需填写邀请码，创建后自动加入对应 Space。</div>
+    </li>
+    <li>
+      <div class="feature-title"><span class="tag p1">P1</span> #10 首次进入 Walk-through 引导（3+5 步）</div>
+      <div class="feature-desc">Space 管理员首次进入 Space 时触发两阶段引导：① Octo 主页面 3 步（欢迎→设置按钮→空间管理入口）；② 空间管理独立页面 5 步（基本信息→成员→邀请码→加入申请→Bot）。两个页面分别在首次进入时独立触发，每步可跳过。<br><br><strong>帮助菜单角色差异：</strong>Space 管理员点击左下角 ❓ 帮助按钮时，菜单中额外显示「Space 管理后台」入口（点击跳转空间管理页）；普通用户的帮助菜单无此选项。</div>
+    </li>
+  </ul>
+
+  <div class="callout blue">
+    💡 Walk-through 引导为非阻断式（可跳过）。两个阶段分别在对应页面首次打开时独立触发（Octo 主页面 3 步 + 空间管理页 5 步）。空间管理是独立网页，从 Octo 主页面点击「空间管理」后打开。
+  </div>
+</div>
+
+<!-- ==================== 视角三：普通用户 ==================== -->
+<div class="section">
+  <h2><span class="icon">👤</span> 视角三：普通用户 <span class="tag" style="background:#E8F5E9;color:#2E7D32;">两版本共有</span></h2>
+
+  <div class="role-card">
+    <div class="role-icon">🙋</div>
+    <div class="role-info">
+      <strong>普通用户</strong>
+      <p>通过邀请码或邀请链接注册加入 Space 的成员。</p>
+    </div>
+  </div>
+
+  <h3>用户注册加入流程</h3>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="circle green">📩</div>
+      <div class="name">收到邀请链接</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="circle green">📝</div>
+      <div class="name">打开链接注册</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="circle green">🔑</div>
+      <div class="name">邀请码自动填充</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="circle green">✅</div>
+      <div class="name">进入 Space</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="circle green">💬</div>
+      <div class="name">自动加入全员群</div>
+    </div>
+  </div>
+
+  <h3>加入方式说明</h3>
+  <table class="compare-table">
+    <thead><tr><th>加入方式</th><th>用户体验</th><th>管理员操作</th></tr></thead>
+    <tbody>
+      <tr><td><strong>直接加入</strong></td><td>注册后立即进入 Space</td><td>无需审批</td></tr>
+      <tr><td><strong>需审批</strong></td><td>注册后提交申请，等待管理员审批</td><td>在「加入申请」tab 中批准/拒绝</td></tr>
+    </tbody>
+  </table>
+
+  <h3>首次进入体验优化</h3>
+  <ul class="feature-list">
+    <li>
+      <div class="feature-title"><span class="tag p0">P0</span> #3 自动创建全员群</div>
+      <div class="feature-desc">创建 Space 时自动创建全员群，Space 拥有者为群主，群名跟随 Space 名称。进入 Octo 时不再是空白页面，立即看到全员群和群聊消息，有即时归属感。</div>
+    </li>
+    <li>
+      <div class="feature-title"><span class="tag p0">P0</span> #16 普通用户自动加入全员群</div>
+      <div class="feature-desc">普通用户通过邀请码注册并加入 Space 后，系统自动将其加入全员群，无需手动操作。全员群内显示「{用户名} 加入了群聊」系统提示，帮助团队了解新成员动态。</div>
+    </li>
+    <li>
+      <div class="feature-title"><span class="tag p0">P0</span> #12 Octo 产品介绍弹窗</div>
+      <div class="feature-desc">首次进入 Space 时自动弹出 Octo 产品介绍视频弹窗。<strong>触发时机因角色而异：</strong>Space 管理员在 Walk-through 引导完成后弹出；普通用户进入 Space 后直接弹出（无 Walk-through）。弹窗包含产品介绍视频 + 导向按钮：SaaS 版为「找向导虾聊聊」，本地化部署版为「查看产品功能文档」。<br><br><strong>关闭弹窗后的引导提示：</strong>用户关闭弹窗（点击导向按钮或「跳过」）后，左下角 ❓ 帮助按钮旁自动弹出一个轻量 tooltip「随时点这里查看新手引导 👋」，10 秒后自动消失。帮助用户知道后续可以随时唤起引导入口。</div>
+    </li>
+    <li>
+      <div class="feature-title"><span class="tag p1">P1</span> #13 BotFather 私聊引导</div>
+      <div class="feature-desc">消息列表中预置 BotFather 私聊消息，通过对话式交互告知用户基本操作步骤（如何发消息、创建群聊、添加 Bot 等），提供交互式的新手教程。所有用户（管理员和普通用户）首次进入 Space 时都会看到。</div>
+    </li>
+    <li>
+      <div class="feature-title"><span class="tag p1">P1</span> #14 「向导虾」产品向导 Bot（SaaS 版）</div>
+      <div class="feature-desc">SaaS 版本中，消息列表额外预置「向导虾」官方向导 Bot，作为 BotFather 之外的产品功能向导。通过对话式交互带领用户熟悉 Octo 核心功能（发消息、群聊、Bot、任务等）。<br><br><strong>角色差异：</strong>Space 管理员的向导虾消息中额外包含「⚙️ 空间管理后台」入口链接和「邀请同事加入」引导；普通用户的向导虾不包含管理后台和邀请相关内容。</div>
+    </li>
+    <li>
+      <div class="feature-title"><span class="tag p1">P1</span> #15 新手引导帮助菜单（❓ 按钮）</div>
+      <div class="feature-desc">左下角 ❓ 帮助按钮，点击弹出「你想先做什么？」新手引导菜单。菜单项因版本和角色而异：<br><br>
+        <strong>SaaS 版 · Space 管理员：</strong>跟向导虾聊聊 / 领养龙虾（下载客户端） / 绑定龙虾 / Space 管理后台<br>
+        <strong>SaaS 版 · 普通用户：</strong>跟向导虾聊聊 / 领养龙虾 / 绑定龙虾<br>
+        <strong>本地化部署版 · Space 管理员：</strong>领养龙虾 / 绑定龙虾 / 打开 Octo 使用手册 / Space 管理后台<br>
+        <strong>本地化部署版 · 普通用户：</strong>领养龙虾 / 绑定龙虾 / 打开 Octo 使用手册<br><br>
+        用户可随时通过 ❓ 按钮重新打开菜单，作为长期可用的引导入口。</div>
+    </li>
+  </ul>
+
+  <div class="callout blue">
+    💡 <strong>版本差异 & 角色差异：</strong><br>
+    · <strong>普通用户：</strong>进入 Space → 直接弹产品介绍弹窗 → 关闭后左下角弹新手引导提示 → 消息列表有全员群 + BotFather + 向导虾(SaaS)<br>
+    · <strong>Space 管理员：</strong>进入 Space → Walk-through 引导 → 引导完弹产品介绍弹窗 → 关闭后左下角弹新手引导提示 → 消息列表同上<br>
+    · <strong>SaaS 版：</strong>弹窗按钮「找向导虾聊聊」，消息列表有「向导虾」官方 Bot（管理员版多含空间管理入口 + 邀请引导）<br>
+    · <strong>本地化部署版：</strong>弹窗按钮「查看产品功能文档」，无向导虾<br>
+    · <strong>帮助菜单：</strong>Space 管理员多一个「Space 管理后台」入口（SaaS 和本地化部署版均有），普通用户无此选项
+  </div>
+
+  <div class="callout">
+    ⚠️ <strong>「需审批」场景：</strong>用户提交加入申请后，页面提示「等待管理员审批」。Space 管理员在空间管理 → 加入申请 中处理。
+  </div>
+</div>
+
+<!-- ==================== 全部 Feature 汇总 ==================== -->
+<div class="section">
+  <h2><span class="icon">📋</span> 全部优化 Feature 汇总（16项）</h2>
+
+  <table class="compare-table">
+    <thead><tr><th>#</th><th>Feature</th><th>优先级</th><th>适用范围</th><th>视角</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>首次登录 Setup Wizard</td><td><span class="tag p0">P0</span></td><td>仅本地化</td><td>Admin</td></tr>
+      <tr><td>2</td><td>邮箱注册默认开启</td><td><span class="tag p0">P0</span></td><td>仅本地化</td><td>Admin</td></tr>
+      <tr><td>3</td><td>创建 Space 自动创建全员群</td><td><span class="tag p0">P0</span></td><td>两版本共有</td><td>Space 管理员</td></tr>
+      <tr><td>4</td><td>Space 拥有者免邀请码加入</td><td><span class="tag p0">P0</span></td><td>两版本共有</td><td>Space 管理员</td></tr>
+      <tr><td>5</td><td>Octo 登录页管理后台入口</td><td><span class="tag p1">P1</span></td><td>仅本地化</td><td>Admin</td></tr>
+      <tr><td>6</td><td>SMTP 自动识别 + 快捷选择</td><td><span class="tag p1">P1</span></td><td>仅本地化</td><td>Admin</td></tr>
+      <tr><td>7</td><td>SMTP 授权码帮助文档</td><td><span class="tag p1">P1</span></td><td>仅本地化</td><td>Admin</td></tr>
+      <tr><td>8</td><td>部署脚本终端输出优化</td><td><span class="tag p2">P2</span></td><td>仅本地化</td><td>Admin</td></tr>
+      <tr><td>9</td><td>未配置拦截提示</td><td><span class="tag p0">P0</span></td><td>仅本地化</td><td>Admin</td></tr>
+      <tr><td>10</td><td>Space 管理员 Walk-through 引导</td><td><span class="tag p1">P1</span></td><td>两版本共有</td><td>Space 管理员</td></tr>
+      <tr><td>11</td><td>管理后台 Walk-through 引导</td><td><span class="tag p1">P1</span></td><td>仅本地化</td><td>Admin</td></tr>
+      <tr><td>12</td><td>Octo 产品介绍弹窗</td><td><span class="tag p0">P0</span></td><td>两版本共有</td><td>Space 管理员 / 用户</td></tr>
+      <tr><td>13</td><td>BotFather 私聊引导</td><td><span class="tag p1">P1</span></td><td>两版本共有</td><td>用户</td></tr>
+      <tr><td>14</td><td>「向导虾」产品向导 Bot</td><td><span class="tag p1">P1</span></td><td>仅 SaaS</td><td>用户</td></tr>
+      <tr><td>15</td><td>新手引导帮助菜单（❓ 按钮）</td><td><span class="tag p1">P1</span></td><td>两版本共有</td><td>Space 管理员 / 用户</td></tr>
+      <tr><td>16</td><td>普通用户自动加入全员群</td><td><span class="tag p0">P0</span></td><td>两版本共有</td><td>用户</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== 前后对比 ==================== -->
+<div class="section">
+  <h2><span class="icon">⚡</span> 前后对比</h2>
+
+  <table class="compare-table">
+    <thead><tr><th>维度</th><th>优化前</th><th>优化后</th></tr></thead>
+    <tbody>
+      <tr><td>Admin 操作步骤</td><td class="old">6 步（跨多个页面）</td><td class="new-val">3 步（一个向导走完）</td></tr>
+      <tr><td>Admin 完成时间</td><td class="old">15~30 分钟（含摸索）</td><td class="new-val">5 分钟以内</td></tr>
+      <tr><td>Space 管理员上手</td><td class="old">无引导，自行摸索</td><td class="new-val">3+5 步 Walk-through（主页面 + 空间管理页）</td></tr>
+      <tr><td>用户首次体验</td><td class="old">空白页面，无内容</td><td class="new-val">自动加入全员群 + 群介绍弹窗 + BotFather/向导虾引导</td></tr>
+      <tr><td>邮箱注册</td><td class="old">默认关闭，需手动开启</td><td class="new-val">默认开启</td></tr>
+      <tr><td>邮箱配置难度</td><td class="old">不知道 SMTP 是什么</td><td class="new-val">自动识别 + 快捷选择 + 教程</td></tr>
+      <tr><td>邀请码获取</td><td class="old">需自行在后台找入口</td><td class="new-val">向导最后一步自动展示 + 一键复制</td></tr>
+      <tr><td>未配置时的用户体验</td><td class="old">点登录无反应或报错</td><td class="new-val">明确提示 + 引导去管理后台</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== 实施路线 ==================== -->
+<div class="section">
+  <h2><span class="icon">🗓️</span> 实施路线</h2>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="time-label">第一阶段（P0 · 核心流程打通）</div>
+      <div class="time-content">
+        <strong>Admin 视角：</strong>Setup Wizard + 邮箱注册默认开启 + 未配置拦截提示<br>
+        <strong>Space 管理员视角：</strong>创建 Space 自动创建全员群 + 拥有者免邀请码加入 + Octo 产品介绍弹窗<br>
+        <strong>用户视角：</strong>新成员自动加入全员群(#16) + Octo 产品介绍弹窗（直接弹出，无 Walk-through）<br>
+        <em style="color:#888; font-size:12px;">目标：三个角色的核心路径 5 分钟内走通</em>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="time-label">第二阶段（P1 · 体验打磨）</div>
+      <div class="time-content">
+        <strong>Admin 视角：</strong>登录页管理后台入口 + SMTP 智能识别 + 帮助文档 + 管理后台 Walk-through 引导<br>
+        <strong>Space 管理员视角：</strong>Walk-through 引导（8步聚光灯）<br>
+        <strong>用户视角：</strong>BotFather 私聊引导（两版本共有）/ 「向导虾」产品向导 Bot（SaaS 额外）/ 新手引导帮助菜单（❓ 按钮，两版本共有）<br>
+        <em style="color:#888; font-size:12px;">目标：消除认知门槛，降低学习成本</em>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="time-label">第三阶段（P2 · 锦上添花）</div>
+      <div class="time-content">
+        <strong>Admin 视角：</strong>部署脚本终端输出优化<br>
+        <strong>长远考虑：</strong>内置默认发件服务（零邮箱配置可用）<br>
+        <em style="color:#888; font-size:12px;">目标：部署即用，零配置上手</em>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 交互原型 ==================== -->
+<div class="section">
+  <h2><span class="icon">🖥️</span> 交互原型</h2>
+  <p>三个视角的 HTML 交互原型已完成，可直接在浏览器中打开体验完整流程：</p>
+  <div class="callout blue">
+    📎 原型文件：<strong>octo-onboarding-combined.html</strong>（同目录下）<br>
+    包含六个页面（导航栏切换）：<br>
+    · <strong>Octo 登录页</strong> — 真实样式还原，含管理后台入口 + 未配置拦截弹窗 <span class="tag" style="background:#FFF3E0;color:#E65100;">仅本地化</span><br>
+    · <strong>Admin Setup Wizard</strong> — 3步引导 + SMTP 自动识别 + 帮助弹窗 <span class="tag" style="background:#FFF3E0;color:#E65100;">仅本地化</span><br>
+    · <strong>Admin 管理后台</strong> — 4 步 Walk-through（Space表格→邀请码入口→复制邀请码→应用Bot） <span class="tag" style="background:#FFF3E0;color:#E65100;">仅本地化</span><br>
+    · <strong>Space管理员·主页面</strong> — 3 步 Walk-through + 欢迎弹窗，支持 SaaS/本地化版本切换 <span class="tag" style="background:#E8F5E9;color:#2E7D32;">两版本共有</span><br>
+    · <strong>Space管理员·管理页</strong> — 5 步 Walk-through（基本信息→成员→邀请码→加入申请→Bot） <span class="tag" style="background:#E8F5E9;color:#2E7D32;">两版本共有</span><br>
+    · <strong>普通用户</strong> — 欢迎弹窗 + 消息列表（全员群/向导虾/BotFather），支持 SaaS/本地化版本切换 <span class="tag" style="background:#E8F5E9;color:#2E7D32;">两版本共有</span>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  Octo Platform · Onboarding 优化规划 · Admin · Space 管理员 · 用户 · 2026.05.20
+</div>
+
+</body>
+</html>
